@@ -140,7 +140,7 @@ if($total_wishlist > 0){
           <?php if(empty($wishlist)): ?>
           <!-- Empty State -->
           <div class="col-span-full text-center py-16">
-            <i class="fa-heart-broken text-6xl text-gray-300 mb-4"></i>
+            <i class="fas fa-heart-broken text-6xl text-gray-300 mb-4"></i>
             <h3 class="text-xl font-semibold text-gray-600 mb-2">Wishlist Masih Kosong</h3>
             <p class="text-gray-500 mb-6">Tambahkan destinasi favorit Anda ke wishlist!</p>
             <a href="home.php" class="px-6 py-3 rounded-xl text-white font-medium bg-gradient-to-r from-red-500 via-orange-400 to-yellow-300 hover:shadow-lg transition-all inline-block">

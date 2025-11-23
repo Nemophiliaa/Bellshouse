@@ -54,9 +54,9 @@
                             class="grid gap-3 sm:grid-cols-2 lg:bg-white lg:rounded-[36px] lg:p-5 lg:rounded-br-none lg:w-[90%] lg:max-w-6xl lg:mx-auto  lg:ring-5 lg:ring-slate-50/25 lg:shadow-md lg:shadow-slate-100/50">
                             <!-- Select Form Start -->
                             <div>
-                                <select
+                                <select id="filter-kategori" onchange="applyFilters()"
                                     class="w-full border-2 border-slate-300 rounded-3xl p-5 text-slate-500 font-medium focus:border-red-500 outline-none">
-                                    <option>Pilih Kategori Wisata</option>
+                                    <option value="">Semua Kategori</option>
                                     <?php
                                     $query_kategori = mysqli_query($conn, "SELECT * FROM kategori");
                                     while ($kategori = mysqli_fetch_assoc($query_kategori)) {
@@ -118,7 +118,7 @@
                             <div
                                 class="grid gap-3 md:grid-cols-2  lg:bg-white lg:p-3 lg:rounded-b-[36px]  lg:ring-5 lg:ring-slate-50/25 lg:shadow-md lg:shadow-slate-100/50">
                                 <div class="lg:py-2">
-                                    <select id="filter-provinsi"
+                                    <select id="filter-provinsi" onchange="applyFilters()"
                                         class="w-full border-2 border-slate-300 rounded-full p-5 text-slate-500 font-medium focus:border-orange-400 outline-none">
                                         <option value="">Semua Provinsi</option>
                                         <?php
@@ -133,7 +133,7 @@
                                     </select>
                                 </div>
                                 <div class="lg:py-2">
-                                    <select id="filter-kota"
+                                    <select id="filter-kota" onchange="applyFilters()"
                                         class="w-full border-2 border-slate-300 rounded-full p-5 text-slate-500 font-medium focus:border-orange-400 outline-none">
                                         <option value="">Semua Kota</option>
                                         <?php
@@ -179,14 +179,19 @@
                         }
                     }
                     
-                    $query_destinasi = mysqli_query($conn, "SELECT destinasi.*, kota.kota, provinsi.provinsi 
+                    $query_destinasi = mysqli_query($conn, "SELECT destinasi.*, kota.kota, kota.id as id_kota_val, provinsi.provinsi, provinsi.id as id_provinsi_val, kategori.id as id_kategori_val
                                                           FROM destinasi 
                                                           JOIN kota ON destinasi.id_kota = kota.id 
-                                                          JOIN provinsi ON kota.id_provinsi = provinsi.id");
+                                                          JOIN provinsi ON kota.id_provinsi = provinsi.id
+                                                          JOIN kategori ON destinasi.id_kategori = kategori.id");
                     while ($row = mysqli_fetch_assoc($query_destinasi)) {
                         $in_wishlist = in_array($row['id'], $wishlist_ids);
                         ?>
-                        <div class="w-full rounded-3xl overflow-hidden shadow-md bg-slate-100 group hover:shadow-xl hover:scale-105 transition-all duration-150 relative">
+                        <div class="w-full rounded-3xl overflow-hidden shadow-md bg-slate-100 group hover:shadow-xl hover:scale-105 transition-all duration-150 relative destination-card"
+                             data-kategori="<?= $row['id_kategori_val'] ?>"
+                             data-provinsi="<?= $row['id_provinsi_val'] ?>"
+                             data-kota="<?= $row['id_kota_val'] ?>"
+                             data-nama="<?= strtolower($row['nama_destinasi']) ?>">
                             <a href="detail-destinasi.php?id=<?= $row['id'] ?>">
                                 <header class="relative">
                                     <img src="../../backend/img/<?= $row['foto'] ?>" alt="<?= $row['nama_destinasi'] ?>"
@@ -398,6 +403,67 @@
                 toast.style.transform = 'translateX(400px)';
                 setTimeout(() => toast.remove(), 300);
             }, 2000);
+        }
+        
+        // Filter functionality
+        function applyFilters() {
+            const kategori = document.getElementById('filter-kategori').value;
+            const provinsi = document.getElementById('filter-provinsi').value;
+            const kota = document.getElementById('filter-kota').value;
+            
+            const cards = document.querySelectorAll('.destination-card');
+            let visibleCount = 0;
+            
+            cards.forEach(card => {
+                const cardKategori = card.getAttribute('data-kategori');
+                const cardProvinsi = card.getAttribute('data-provinsi');
+                const cardKota = card.getAttribute('data-kota');
+                
+                const matchKategori = !kategori || cardKategori === kategori;
+                const matchProvinsi = !provinsi || cardProvinsi === provinsi;
+                const matchKota = !kota || cardKota === kota;
+                
+                if (matchKategori && matchProvinsi && matchKota) {
+                    card.style.display = 'block';
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+            
+            // Show empty state if no results
+            showEmptyState(visibleCount === 0);
+        }
+        
+        function showEmptyState(show) {
+            let emptyState = document.getElementById('empty-state');
+            
+            if (show && !emptyState) {
+                const container = document.querySelector('.grid.gap-5.justify-center');
+                emptyState = document.createElement('div');
+                emptyState.id = 'empty-state';
+                emptyState.className = 'col-span-full text-center py-12';
+                emptyState.innerHTML = `
+                    <div class="bg-white rounded-2xl p-8 shadow-md max-w-md mx-auto">
+                        <i class="fa-solid fa-search text-6xl text-slate-300 mb-4"></i>
+                        <h3 class="text-xl font-bold text-slate-700 mb-2">Tidak Ada Hasil</h3>
+                        <p class="text-slate-500 mb-4">Tidak ada destinasi yang sesuai dengan filter Anda</p>
+                        <button onclick="resetFilters()" class="px-6 py-2 bg-orange-500 text-white rounded-full hover:bg-orange-600 transition-all">
+                            <i class="fa-solid fa-rotate-right mr-2"></i>Reset Filter
+                        </button>
+                    </div>
+                `;
+                container.appendChild(emptyState);
+            } else if (!show && emptyState) {
+                emptyState.remove();
+            }
+        }
+        
+        function resetFilters() {
+            document.getElementById('filter-kategori').value = '';
+            document.getElementById('filter-provinsi').value = '';
+            document.getElementById('filter-kota').value = '';
+            applyFilters();
         }
     </script>
     <script src="../../js/main.js" type="module"></script>

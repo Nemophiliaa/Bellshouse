@@ -248,7 +248,7 @@ $pesanan_cancelled = $conn->query("SELECT COUNT(*) as total FROM pesanan WHERE s
         </div>
 
         <!-- Menu Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
             <a href="manage-destinasi.php" class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition group">
                 <div class="flex items-center gap-4">
                     <div class="bg-gradient-to-r from-orange-500 to-red-500 rounded-lg p-4 group-hover:scale-110 transition">
@@ -257,18 +257,6 @@ $pesanan_cancelled = $conn->query("SELECT COUNT(*) as total FROM pesanan WHERE s
                     <div>
                         <h3 class="text-xl font-bold text-gray-800 group-hover:text-orange-600">Kelola Destinasi</h3>
                         <p class="text-gray-600 text-sm mt-1">Tambah, edit, hapus destinasi wisata</p>
-                    </div>
-                </div>
-            </a>
-
-            <a href="manage-user.php" class="bg-white rounded-lg shadow-md p-6 hover:shadow-xl transition group">
-                <div class="flex items-center gap-4">
-                    <div class="bg-gradient-to-r from-blue-500 to-blue-600 rounded-lg p-4 group-hover:scale-110 transition">
-                        <i class="fas fa-users text-white text-3xl"></i>
-                    </div>
-                    <div>
-                        <h3 class="text-xl font-bold text-gray-800 group-hover:text-blue-600">Kelola User</h3>
-                        <p class="text-gray-600 text-sm mt-1">Lihat dan kelola data pengguna</p>
                     </div>
                 </div>
             </a>
