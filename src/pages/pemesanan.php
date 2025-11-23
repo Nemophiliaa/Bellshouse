@@ -1,211 +1,237 @@
+<?php
+session_start();
+require_once '../../backend/db.php';
+
+// Check if user logged in
+if(!isset($_SESSION['user_id'])){
+    $_SESSION['login_error'] = 'Silakan login terlebih dahulu!';
+    header('Location: login.php');
+    exit;
+}
+
+// Get parameters from detail page
+$id_destinasi = isset($_GET['id']) ? $_GET['id'] : '';
+$tgl_berangkat = isset($_GET['tgl_berangkat']) ? $_GET['tgl_berangkat'] : '';
+$tgl_pulang = isset($_GET['tgl_pulang']) ? $_GET['tgl_pulang'] : '';
+$jumlah_orang = isset($_GET['jumlah_orang']) ? (int)$_GET['jumlah_orang'] : 1;
+
+// Validation
+if(!$id_destinasi || !$tgl_berangkat || !$tgl_pulang || $jumlah_orang < 1 || $jumlah_orang > 5){
+    header('Location: home.php');
+    exit;
+}
+
+// Get destinasi data
+$destinasi = db_fetch_one($conn, 'SELECT * FROM destinasi WHERE id = ?', [$id_destinasi]);
+if(!$destinasi){
+    header('Location: home.php');
+    exit;
+}
+
+// Get user data
+$user = db_fetch_one($conn, 'SELECT * FROM data_user WHERE id = ?', [$_SESSION['user_id']]);
+
+// Calculate total
+$total_bayar = $destinasi['harga'] * $jumlah_orang;
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home</title>
-
-    <!-- Tailwind CDN -->
+    <title>Form Pemesanan - BellsHouse</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-
-    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kumar+One&family=Poppins:wght@200;300;400;500;600;700;800&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 
 <body class="font-[poppins] bg-gradient-to-b from-orange-50 to-white">
+    <?php include '../components/navigation.php'; ?>
 
-    <!-- Navbar -->
-    <?php include '../components/navigation.php'?>
 
     <main class="py-16">
-        <section>
-
-            <!-- MAIN WRAPPER -->
-            <div class="w-[90%] mx-auto grid md:grid-cols-2 gap-10 xl:gap-16 items-start">
-
-                <!-- ========= LEFT : FORM ========= -->
-                <div class="space-y-6">
-
-                    <h1 class="text-3xl font-semibold text-slate-800">Detail Pememsanan</h1>
-                    <p class="text-slate-600 max-w-md">
-                        Lengkapi detailnya dengan datamu untuk pengiriman e-tiket dan keperluan pemesanan.
-                    </p>
-
-                    <!-- FORM START -->
-                    <form action="" class="space-y-6">
-
-                        <!-- Nama -->
-                        <div>
-                            <input 
-                                type="text" 
-                                class="w-full border-2 border-slate-300 rounded-xl p-5 text-lg text-black font-medium 
-                                       focus:border-orange-500 outline-none placeholder:text-slate-400"
-                                placeholder="Nama Lengkap Sesuai Identitas">
-                        </div>
-
-                        <!-- Gender -->
-                        <div class="flex items-center gap-8">
-                            <label class="flex items-center gap-3">
-                                <input type="radio" name="sex">
-                                <span>Laki-laki</span>
-                            </label>
-
-                            <label class="flex items-center gap-3">
-                                <input type="radio" name="sex">
-                                <span>Perempuan</span>
-                            </label>
-                        </div>
-
-                        <!-- 2 Inputs -->
-                        <div class="grid md:grid-cols-2 gap-5">
-                            
-                            <!-- Nomor -->
-                            <div>
-                                <input 
-                                    type="tel" 
-                                    placeholder="+62 xxx xxx xxx"
-                                    class="w-full border border-slate-300 rounded-xl p-4 text-black text-lg 
-                                           focus:border-orange-400 outline-none placeholder:text-slate-400 transition-all">
-                            </div>
-
-                            <!-- Jumlah Penumpang -->
-                            <div>
-                                <input 
-                                    type="number" 
-                                    placeholder="Jumlah Penumpang (max 2)"
-                                    max="2"
-                                    class="w-full border border-slate-300 rounded-xl p-4 text-black text-lg 
-                                           focus:border-orange-400 outline-none placeholder:text-slate-400">
-                            </div>
-                        </div>
-
-                        <!-- Alamat -->
-                        <div>
-                            <textarea 
-                                class="w-full border border-slate-300 rounded-xl p-4 text-lg text-black 
-                                       focus:border-orange-400 outline-none placeholder:text-slate-400 h-32 resize-none"
-                                placeholder="Alamat"></textarea>
-                        </div>
-
-                    </form>
-                    <!-- FORM END -->
-
-                </div>
-
-                <!-- ========== RIGHT : CARD + INFO ========== -->
-                <div class="space-y-10">
-
-                    <!-- Card (muncul di lg ke atas) -->
-                    <a 
-                        href="#" 
-                        class="hidden lg:block max-w-md rounded-3xl overflow-hidden shadow-md bg-slate-100 
-                               group hover:shadow-xl hover:scale-[1.03] transition-all duration-200 mx-auto">
-
-                        <header class="relative">
-                            <img src="../../assets/gunungMasamba.png" 
-                                 alt="Gunung Masamba" 
-                                 class="w-full object-cover object-center h-52 
-                                        group-hover:scale-105 duration-200 transition-all">
-                        </header>
-
-                        <div class="p-5 space-y-5">
-                            <div class="flex justify-between items-center gap-1.5">
-                                <h1 class="text-xl font-medium">Gunung Masamba</h1>
-                                <p class="whitespace-nowrap">
-                                    <span class="font-bold">Rp.200.000</span> / Malam
-                                </p>
-                            </div>
-
-                            <footer class="space-y-3 text-slate-700">
-                                <div class="flex items-center gap-1.5">
-                                    <i class="fa-solid fa-location-dot text-lg text-red-500"></i>
-                                    <p>Kalimantan Timur, Samarinda</p>
-                                </div>
-
-                                <div class="flex justify-between items-center">
-                                    <div class="flex gap-1.5 items-center">
-                                        <i class="fa-regular fa-star text-yellow-300 text-lg"></i>
-                                        <p class="text-slate-500">4.9</p>
-                                    </div>
-                                    <p class="text-slate-500">89 Reviews</p>
-                                </div>
-                            </footer>
-                        </div>
-                    </a>
-
-                    <!-- Penerbangan Start-->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                        <header class="flex justify-between items-center mb-4">
-                            <h1 class="font-semibold text-slate-700">Penerbangan 1</h1>
-                            <p class="text-slate-500">Jum 28, Nov 2025</p>
-                        </header>
-                        
-                        <div class="flex justify-between">
-                            <div>
-                                <p class="font-medium text-slate-700">Samarinda</p>
-                                <p class="text-slate-500 text-sm">Kota Keberangkatan</p>
-                            </div>
-                            
-                            <div>
-                                <p class="font-medium text-slate-700">Balikpapan</p>
-                                <p class="text-slate-500 text-sm">Kota Tujuan</p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Penerbangan End-->
-
-                   <!-- Order Start -->
-                    <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm 
-                                grid gap-5 md:grid-cols-2 items-center">
-
-                        <!-- Total Harga -->
-                        <header class="space-y-1 md:text-left text-center">
-                            <h1 class="font-semibold text-sm text-slate-700">Total Tiket</h1>
-                            <p class="text-2xl font-semibold text-black">Rp.400.000</p>
-                        </header>
-
-                        <!-- Tombol -->
-                        <div class="grid grid-cols-1 xl:grid-cols-2 gap-3 w-full">
-
-                            <!-- Tombol Pesan -->
-                            <button
-                                type="submit"
-                                class="px-7 py-3 rounded-2xl text-white text-lg font-medium 
-                                    bg-gradient-to-r from-red-500 via-orange-400 to-yellow-300 
-                                    shadow-md hover:shadow-xl hover:scale-[1.04] 
-                                    transition-all duration-300 w-full cursor-pointer">
-                                Pesan
-                            </button>
-
-                            <!-- Tombol Tambah Wishlist -->
-                            <button
-                                type="button"
-                                class="px-4 py-3 rounded-2xl text-orange-600 text-lg font-medium 
-                                    border border-orange-500 bg-white 
-                                    hover:bg-orange-50 hover:scale-[1.04] 
-                                    transition-all duration-300 w-full cursor-pointer">
-                                Tambah Wishlist
-                            </button>
-
-                        </div>
-                    </div>
-                    <!-- Order End -->
-
-                </div>
-
+        <div class="w-[90%] max-w-6xl mx-auto">
+            
+            <!-- Header -->
+            <div class="mb-8">
+                <a href="detail-destinasi.php?id=<?= $id_destinasi ?>" class="text-orange-600 hover:text-orange-700 mb-4 inline-block">
+                    <i class="fas fa-arrow-left mr-2"></i>Kembali
+                </a>
+                <h1 class="text-3xl font-bold text-slate-800 mb-2">Detail Pemesanan</h1>
+                <p class="text-slate-600">Lengkapi data peserta untuk melanjutkan pemesanan</p>
             </div>
 
-        </section>
+            <form action="../../backend/proses-pesanan.php" method="POST" class="grid lg:grid-cols-3 gap-8">
+                
+                <!-- Hidden inputs -->
+                <input type="hidden" name="id_destinasi" value="<?= $id_destinasi ?>">
+                <input type="hidden" name="tgl_berangkat" value="<?= $tgl_berangkat ?>">
+                <input type="hidden" name="tgl_pulang" value="<?= $tgl_pulang ?>">
+                <input type="hidden" name="jumlah_orang" value="<?= $jumlah_orang ?>">
+                <input type="hidden" name="total_bayar" value="<?= $total_bayar ?>">
+
+                <!-- Left: Form Data Peserta -->
+                <div class="lg:col-span-2 space-y-6">
+                    
+                    <!-- Info Pemesan (dari user login) -->
+                    <div class="bg-white rounded-2xl p-6 shadow-md">
+                        <h2 class="text-xl font-bold text-slate-800 mb-4">
+                            <i class="fas fa-user text-orange-500 mr-2"></i>Data Pemesan
+                        </h2>
+                        <div class="grid md:grid-cols-2 gap-4 text-slate-700">
+                            <div>
+                                <p class="text-sm text-slate-500">Nama Lengkap</p>
+                                <p class="font-medium"><?= htmlspecialchars($user['nama']) ?></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500">Email</p>
+                                <p class="font-medium"><?= htmlspecialchars($user['email']) ?></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500">No. Telepon</p>
+                                <p class="font-medium"><?= htmlspecialchars($user['no_tlp']) ?></p>
+                            </div>
+                            <div>
+                                <p class="text-sm text-slate-500">Alamat</p>
+                                <p class="font-medium"><?= htmlspecialchars($user['alamat']) ?></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Data Peserta -->
+                    <?php for($i = 1; $i <= $jumlah_orang; $i++): ?>
+                    <div class="bg-white rounded-2xl p-6 shadow-md">
+                        <h2 class="text-xl font-bold text-slate-800 mb-4">
+                            <i class="fas fa-hiking text-orange-500 mr-2"></i>Data Peserta <?= $i ?>
+                        </h2>
+                        
+                        <div class="space-y-4">
+                            <!-- Nama Lengkap -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">Nama Lengkap *</label>
+                                <input type="text" name="peserta[<?= $i ?>][nama_lengkap]" required
+                                       value="<?= $i == 1 ? htmlspecialchars($user['nama']) : '' ?>"
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-700 font-medium focus:border-orange-500 outline-none transition-all"
+                                       placeholder="Nama sesuai identitas">
+                            </div>
+
+                            <div class="grid md:grid-cols-2 gap-4">
+                                <!-- Jenis Kelamin -->
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Jenis Kelamin *</label>
+                                    <select name="peserta[<?= $i ?>][jenis_kelamin]" required
+                                            class="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-700 font-medium focus:border-orange-500 outline-none transition-all">
+                                        <option value="">Pilih</option>
+                                        <option value="L">Laki-laki</option>
+                                        <option value="P">Perempuan</option>
+                                    </select>
+                                </div>
+
+                                <!-- Tipe Peserta -->
+                                <div>
+                                    <label class="block text-sm font-medium text-slate-700 mb-2">Tipe Peserta *</label>
+                                    <select name="peserta[<?= $i ?>][tipe_peserta]" required
+                                            class="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-700 font-medium focus:border-orange-500 outline-none transition-all">
+                                        <option value="">Pilih</option>
+                                        <option value="dewasa" selected>Dewasa</option>
+                                        <option value="anak">Anak-anak</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- No Identitas -->
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-2">No. Identitas (KTP/Passport) *</label>
+                                <input type="text" name="peserta[<?= $i ?>][no_identitas]" required
+                                       class="w-full px-4 py-3 border border-slate-300 rounded-xl text-slate-700 font-medium focus:border-orange-500 outline-none transition-all"
+                                       placeholder="Nomor KTP atau Passport"
+                                       pattern="[0-9]{16}|[A-Z0-9]{6,9}"
+                                       title="Masukkan 16 digit KTP atau nomor Passport yang valid">
+                            </div>
+                        </div>
+                    </div>
+                    <?php endfor; ?>
+
+                    <!-- Terms & Conditions -->
+                    <div class="bg-orange-50 rounded-2xl p-6 border border-orange-200">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" required class="mt-1 w-5 h-5 text-orange-500 border-gray-300 rounded focus:ring-orange-500">
+                            <span class="text-sm text-slate-700">
+                                Saya menyetujui <a href="#" class="text-orange-600 hover:underline font-medium">syarat dan ketentuan</a> yang berlaku dan bertanggung jawab atas kebenaran data yang saya berikan.
+                            </span>
+                        </label>
+                    </div>
+
+                </div>
+
+                <!-- Right: Order Summary -->
+                <div class="lg:col-span-1">
+                    <div class="bg-white rounded-2xl p-6 shadow-xl sticky top-20">
+                        <h2 class="text-xl font-bold text-slate-800 mb-4">Ringkasan Pemesanan</h2>
+                        
+                        <!-- Destinasi Info -->
+                        <div class="mb-4 pb-4 border-b border-slate-200">
+                            <img src="../../backend/img/<?= htmlspecialchars($destinasi['foto']) ?>" 
+                                 alt="<?= htmlspecialchars($destinasi['nama_destinasi']) ?>"
+                                 class="w-full h-32 object-cover rounded-xl mb-3">
+                            <h3 class="font-bold text-slate-800"><?= htmlspecialchars($destinasi['nama_destinasi']) ?></h3>
+                        </div>
+
+                        <!-- Details -->
+                        <div class="space-y-3 text-sm mb-4">
+                            <div class="flex justify-between">
+                                <span class="text-slate-600"><i class="fas fa-calendar mr-2 text-orange-500"></i>Keberangkatan</span>
+                                <span class="font-medium text-slate-800"><?= date('d M Y', strtotime($tgl_berangkat)) ?></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600"><i class="fas fa-calendar-check mr-2 text-orange-500"></i>Kepulangan</span>
+                                <span class="font-medium text-slate-800"><?= date('d M Y', strtotime($tgl_pulang)) ?></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600"><i class="fas fa-users mr-2 text-orange-500"></i>Jumlah Peserta</span>
+                                <span class="font-medium text-slate-800"><?= $jumlah_orang ?> Orang</span>
+                            </div>
+                        </div>
+
+                        <!-- Price Breakdown -->
+                        <div class="space-y-2 py-4 border-y border-slate-200 text-sm">
+                            <div class="flex justify-between">
+                                <span class="text-slate-600">Harga per orang</span>
+                                <span class="text-slate-800">Rp <?= number_format($destinasi['harga'], 0, ',', '.') ?></span>
+                            </div>
+                            <div class="flex justify-between">
+                                <span class="text-slate-600">Jumlah peserta</span>
+                                <span class="text-slate-800">x<?= $jumlah_orang ?></span>
+                            </div>
+                        </div>
+
+                        <!-- Total -->
+                        <div class="flex justify-between items-center py-4">
+                            <span class="text-lg font-bold text-slate-800">Total Bayar</span>
+                            <span class="text-2xl font-bold text-orange-600">Rp <?= number_format($total_bayar, 0, ',', '.') ?></span>
+                        </div>
+
+                        <!-- Submit Button -->
+                        <button type="submit" 
+                                class="w-full py-4 rounded-xl text-white text-lg font-semibold bg-gradient-to-r from-red-500 via-orange-400 to-yellow-300 shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+                            <i class="fas fa-check-circle mr-2"></i>Konfirmasi Pemesanan
+                        </button>
+
+                        <p class="text-xs text-center text-slate-500 mt-3">
+                            <i class="fas fa-shield-alt mr-1"></i>Pembayaran dilakukan setelah konfirmasi
+                        </p>
+                    </div>
+                </div>
+
+            </form>
+
+        </div>
     </main>
 
-    <!-- Footer -->
-    <?php include '../components/footer.php' ?>
-    <!-- JS -->
-     <script src="../../js/main.js" type="module"></script>
+    <?php include '../components/footer.php'; ?>
+    <script src="../../js/main.js" type="module"></script>
 </body>
 </html>

@@ -1,3 +1,44 @@
+<?php
+session_start();
+require_once '../../backend/db.php';
+
+if (isset($_POST['register'])) {
+    $nama = trim($_POST['nama']);
+    $email = trim($_POST['email']);
+    $no_tlp = trim($_POST['no_tlp']);
+    $password = $_POST['password'];
+    $confirm_password = $_POST['confirm_password'];
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $_SESSION['register_error'] = 'Format email tidak valid';
+    } elseif ($password !== $confirm_password) {
+        $_SESSION['register_error'] = 'Password tidak sama!';
+    } else {
+        $cek = db_fetch_one($conn, 'SELECT id FROM data_user WHERE email = ?', [$email]);
+        if ($cek) {
+            $_SESSION['register_error'] = 'Email sudah terdaftar!';
+        } else {
+            do {
+                $id = 'USR' . strtoupper(bin2hex(random_bytes(2))); // 4 hex chars
+                $exists = db_fetch_one($conn, 'SELECT id FROM data_user WHERE id = ?', [$id]);
+            } while ($exists);
+
+            $hashed = password_hash($password, PASSWORD_DEFAULT);
+            $ok = db_execute($conn,
+                'INSERT INTO data_user (id, nama, email, no_tlp, password) VALUES (?,?,?,?,?)',
+                [$id, $nama, $email, $no_tlp, $hashed]
+            );
+            if ($ok) {
+                $_SESSION['register_success'] = 'Registrasi Berhasil! Silakan Login.';
+                header('Location: login.php');
+                exit;
+            } else {
+                $_SESSION['register_error'] = 'Registrasi gagal!';
+            }
+        }
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,10 +57,24 @@
     <!-- Font Custom CDN Start -->
 
     <!-- Font Awesome CDN Start -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" integrity="sha512-...hash..." crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
     <!-- Font Awesome CDN End -->
+    
+    <!-- SweetAlert2 CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body class="font-[poppins]">
+    <?php if(isset($_SESSION['register_error'])): ?>
+    <script>
+        Swal.fire({
+            title: 'Gagal!',
+            text: '<?= $_SESSION['register_error'] ?>',
+            icon: 'error',
+            confirmButtonText: 'OK',
+            confirmButtonColor: '#f97316'
+        });
+    </script>
+    <?php unset($_SESSION['register_error']); endif; ?>
     <!-- Main Start -->
     <main class="relative min-h-screen overflow-hidden">
     <!-- Video Background  Start -->
@@ -55,13 +110,15 @@
             <!-- Title End -->
 
             <!-- Form  Start -->
-            <form action="">
+            <form action="" method="POST">
                 <!-- Username -->
                 <div class="mb-5">
                     <label class="block font-medium text-white text-lg mb-2 drop-shadow">Nama Lengkap :</label>
                     <input 
                     type="text" 
+                    name="nama"
                     placeholder="Nama Kamu"
+                    required
                     class="w-full border border-white/40 rounded-xl p-4 text-black text-lg 
                     focus:border-orange-400 outline-none bg-white/70 hover:bg-white/90 
                     transition-all">
@@ -73,7 +130,9 @@
                         <label class="block font-medium text-white text-lg mb-2 drop-shadow">Email :</label>
                         <input 
                         type="email" 
+                        name="email"
                         placeholder="email@gmail.com"
+                        required
                         class="w-full border border-white/40 rounded-xl p-4 text-black text-lg 
                         focus:border-orange-400 outline-none bg-white/70 hover:bg-white/90 
                         transition-all">
@@ -83,7 +142,9 @@
                         <label class="block font-medium text-white text-lg mb-2 drop-shadow">No Telepon :</label>
                         <input 
                         type="tel" 
+                        name="no_tlp"
                         placeholder="+62 xxx xxx xxx"
+                        required
                         class="w-full border border-white/40 rounded-xl p-4 text-black text-lg 
                         focus:border-orange-400 outline-none bg-white/70 hover:bg-white/90 
                         transition-all">
@@ -96,6 +157,8 @@
                         <label class="block font-medium text-white text-lg mb-2 drop-shadow">Password :</label>
                         <input 
                         type="password"
+                        name="password"
+                        required
                         class="w-full border border-white/40 rounded-xl p-4 text-black text-lg 
                         focus:border-orange-400 outline-none bg-white/70 hover:bg-white/90
                         transition-all">
@@ -105,6 +168,8 @@
                         <label class="block font-medium text-white text-lg mb-2 drop-shadow">Confirm Password : </label>
                         <input 
                         type="password"
+                        name="confirm_password"
+                        required
                         class="w-full border border-white/40 rounded-xl p-4 text-black text-lg 
                         focus:border-orange-400 outline-none bg-white/70 hover:bg-white/90
                         transition-all">
@@ -114,12 +179,12 @@
 
                 <!-- Button -->
                 <div>
-                    <button type="submit" 
+                    <button type="submit" name="register"
                     class="font-medium py-3 mb-2 w-full rounded-3xl text-white text-2xl
                     bg-linear-to-r/oklch from-red-500 via-orange-400 to-yellow-300
                     shadow-lg hover:shadow-xl hover:scale-[1.05]
                     transition-all duration-300">
-                    Masuk
+                    Daftar
                 </button>
                 
                 <p class="text-slate-200 text-center">
