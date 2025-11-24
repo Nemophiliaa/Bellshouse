@@ -49,7 +49,7 @@ if(isset($_SESSION['user_id'])){
           <!-- Close Button -->
           <button
             id="closeToggle"
-            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors">
+            class="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 transition-colors cursor-pointer">
             <i class="fa-solid fa-xmark text-2xl text-gray-600"></i>
           </button>
         </div>

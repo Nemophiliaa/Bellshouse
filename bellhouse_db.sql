@@ -1,11 +1,12 @@
+SET FOREIGN_KEY_CHECKS = 0;
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 23, 2025 at 02:23 PM
+-- Generation Time: Nov 24, 2025 at 04:18 AM
 -- Server version: 10.4.32-MariaDB
--- PHP Version: 8.2.12
+-- PHP Version: 8.1.25
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -33,16 +34,17 @@ CREATE TABLE `data_user` (
   `email` varchar(255) NOT NULL,
   `no_tlp` varchar(15) NOT NULL,
   `password` varchar(255) NOT NULL,
-  `alamat` text NOT NULL,
-  `tanggal_lahir` date NOT NULL
+  `alamat` text NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `data_user`
 --
 
-INSERT INTO `data_user` (`id`, `nama`, `email`, `no_tlp`, `password`, `alamat`, `tanggal_lahir`) VALUES
-('USR2279', 'Jayden Dwi naufal', 'dwinaufaljayden@gmail.com', '082114738801', '$2y$10$Nnw6gQ4SEFXmS03WDUftXeHZ731JdaMRCZmQ6R6iwTYk2bLVDwKlK', 'Jl. Aminah Syukur', '0000-00-00');
+INSERT INTO `data_user` (`id`, `nama`, `email`, `no_tlp`, `password`, `alamat`) VALUES
+('USR15ED', 'Muhammad Yasin', 'necro@gmail.com', '08124153555', '$2y$10$S0w85.14QKwBGFj0US7aTuOZTuPpa1sY1wmAD54gTVZI6NP6ke0MG', ''),
+('USR2279', 'Jayden Dwi naufal', 'dwinaufaljayden@gmail.com', '082114738801', '$2y$10$Nnw6gQ4SEFXmS03WDUftXeHZ731JdaMRCZmQ6R6iwTYk2bLVDwKlK', 'Jl. Aminah Syukur'),
+('USRABBA', 'Yudhistira Dwi Putra Ambat', 'ynhaein@gmail.com', '08123135245', '$2y$10$H/X1PQY/O6FeQz52zDBoc.C3jdggS2ymECh8GJmnoqkt/w/iSAlza', 'JL SEJATI  GG KASAH 1');
 
 -- --------------------------------------------------------
 
@@ -237,87 +239,10 @@ ALTER TABLE `pesanan_peserta`
 --
 ALTER TABLE `provinsi`
   ADD PRIMARY KEY (`id`);
-
---
--- Indexes for table `wishlist`
---
-ALTER TABLE `wishlist`
-  ADD PRIMARY KEY (`id`),
-  ADD UNIQUE KEY `unique_wishlist` (`id_user`,`id_destinasi`),
-  ADD KEY `id_destinasi` (`id_destinasi`);
-
---
--- AUTO_INCREMENT for dumped tables
---
-
---
--- AUTO_INCREMENT for table `kategori`
---
-ALTER TABLE `kategori`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
-
---
--- AUTO_INCREMENT for table `kota`
---
-ALTER TABLE `kota`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- AUTO_INCREMENT for table `pesanan_peserta`
---
-ALTER TABLE `pesanan_peserta`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
-
---
--- AUTO_INCREMENT for table `provinsi`
---
-ALTER TABLE `provinsi`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT for table `wishlist`
---
-ALTER TABLE `wishlist`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
-
---
--- Constraints for dumped tables
---
-
---
--- Constraints for table `destinasi`
---
-ALTER TABLE `destinasi`
-  ADD CONSTRAINT `destinasi_ibfk_1` FOREIGN KEY (`id_kategori`) REFERENCES `kategori` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `destinasi_ibfk_2` FOREIGN KEY (`id_kota`) REFERENCES `kota` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `kota`
---
-ALTER TABLE `kota`
-  ADD CONSTRAINT `kota_ibfk_1` FOREIGN KEY (`id_provinsi`) REFERENCES `provinsi` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `pesanan`
---
-ALTER TABLE `pesanan`
-  ADD CONSTRAINT `pesanan_ibfk_1` FOREIGN KEY (`id_data_user`) REFERENCES `data_user` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `pesanan_ibfk_2` FOREIGN KEY (`destinasi`) REFERENCES `destinasi` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `pesanan_peserta`
---
-ALTER TABLE `pesanan_peserta`
-  ADD CONSTRAINT `pesanan_peserta_ibfk_1` FOREIGN KEY (`id_pesanan`) REFERENCES `pesanan` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
---
--- Constraints for table `wishlist`
---
-ALTER TABLE `wishlist`
-  ADD CONSTRAINT `wishlist_ibfk_1` FOREIGN KEY (`id_user`) REFERENCES `data_user` (`id`) ON DELETE CASCADE,
-  ADD CONSTRAINT `wishlist_ibfk_2` FOREIGN KEY (`id_destinasi`) REFERENCES `destinasi` (`id`) ON DELETE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+SET FOREIGN_KEY_CHECKS = 1;

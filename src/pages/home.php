@@ -30,7 +30,7 @@
     <main>
         <!-- Hero Section Start -->
         <section
-            class="bg-blend-multiply bg-[rgba(184,230,254)] bg-[url(../../assets/hero-bg.png)] xl:bg-no-repeat xl:bg-cover mb-105 sm:mb-65 md:mb-45 lg:mb-15 ">
+            class="bg-blend-multiply bg-[rgba(184,230,254)] bg-[url(../../assets/hero-bg.png)] xl:bg-no-repeat xl:bg-cover mb-75 sm:mb-55 md:mb-35 lg:mb-15 ">
             <!-- Hero Start -->
             <div>
                 <!-- Header Hero Start -->
@@ -55,7 +55,7 @@
                             <!-- Select Form Start -->
                             <div>
                                 <select id="filter-kategori" onchange="applyFilters()"
-                                    class="w-full border-2 border-slate-300 rounded-3xl p-5 text-slate-500 font-medium focus:border-red-500 outline-none">
+                                    class="w-full border-2 border-slate-300 rounded-3xl p-5 text-slate-500 font-medium focus:border-orange-500 outline-none">
                                     <option value="">Semua Kategori</option>
                                     <?php
                                     $query_kategori = mysqli_query($conn, "SELECT * FROM kategori");
@@ -69,8 +69,8 @@
 
                             <!-- Search Form Start -->
                             <div class="relative lg:flex lg:items-center gap-3">
-                                <input type="text" id="search-input"
-                                    class="w-full border-2 border-slate-300 rounded-3xl p-5 text-black font-medium focus:border-red-500 outline-none placeholder:text-slate-400"
+                                <input type="search" id="search-input"
+                                    class="w-full border-2 border-slate-300 rounded-3xl p-5 text-black font-medium focus:border-orange-500 outline-none placeholder:text-slate-400"
                                     placeholder="Cari Tempat Wisata"
                                     oninput="handleSearch(this.value)"
                                     onfocus="showSearchResults()"
@@ -102,12 +102,12 @@
                                     <path d="M0,0 Q44,0 44,44 L44,0 Z" fill="white" fill-opacity="1"></path>
                                 </svg>
                                 <a href="mytrip.php"
-                                    class="font-bold gap-5 text-xl text-slate-100 p-5 flex justify-center items-center rounded-full bg-linear-to-r/oklch from-red-600 via-orange-400 to-amber-300 hover:scale-105 duration-300 transition-all md:px-5 py-4  lg:ring-5 lg:ring-slate-50/25 lg:shadow-md lg:shadow-slate-100/50">
+                                    class="font-bold  gap-5 text-xl text-slate-100 p-5 hidden lg:flex justify-center items-center rounded-full bg-linear-to-r/oklch from-red-600 via-orange-400 to-amber-300 hover:scale-105 duration-300 transition-all md:px-5 py-4  lg:ring-5 lg:ring-slate-50/25 lg:shadow-md lg:shadow-slate-100/50">
                                     <i class="fa-solid fa-plane-departure"></i>
                                     My Trip
                                 </a>
                                 <a href="wishlist.php"
-                                    class="font-bold gap-5 text-xl text-slate-100 p-5 flex justify-center items-center rounded-full bg-linear-to-r/oklch from-red-600 via-orange-400 to-amber-300 hover:scale-105 duration-300 transition-all md:px-5 py-4  lg:ring-5 lg:ring-slate-50/25 lg:shadow-md lg:shadow-slate-100/50">
+                                    class="font-bold  gap-5 text-xl text-slate-100 p-5 hidden lg:flex justify-center items-center rounded-full bg-linear-to-r/oklch from-red-600 via-orange-400 to-amber-300 hover:scale-105 duration-300 transition-all md:px-5 py-4  lg:ring-5 lg:ring-slate-50/25 lg:shadow-md lg:shadow-slate-100/50">
                                     <i class="fa-regular fa-heart"></i>
                                     Wishlist
                                 </a>
