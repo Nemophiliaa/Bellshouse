@@ -4,7 +4,7 @@ SET FOREIGN_KEY_CHECKS = 0;
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 24, 2025 at 04:18 AM
+-- Generation Time: Nov 24, 2025 at 10:22 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.1.25
 
@@ -42,7 +42,8 @@ CREATE TABLE `data_user` (
 --
 
 INSERT INTO `data_user` (`id`, `nama`, `email`, `no_tlp`, `password`, `alamat`) VALUES
-('USR15ED', 'Muhammad Yasin', 'necro@gmail.com', '08124153555', '$2y$10$S0w85.14QKwBGFj0US7aTuOZTuPpa1sY1wmAD54gTVZI6NP6ke0MG', ''),
+('USR15ED', 'Muhammad Yasin', 'necro@gmail.com', '08124153555', '$2y$10$S0w85.14QKwBGFj0US7aTuOZTuPpa1sY1wmAD54gTVZI6NP6ke0MG', 'JL. Adam Malik'),
+('USR2110', 'Muhammad Rapi', 'raf@gmail.com', '0812391349', '$2y$10$dt9pAP/LjEUZj9dI3./dB.5saSxSbLEDCTq6xgj6D.M.Dwy2oxhX.', ''),
 ('USR2279', 'Jayden Dwi naufal', 'dwinaufaljayden@gmail.com', '082114738801', '$2y$10$Nnw6gQ4SEFXmS03WDUftXeHZ731JdaMRCZmQ6R6iwTYk2bLVDwKlK', 'Jl. Aminah Syukur'),
 ('USRABBA', 'Yudhistira Dwi Putra Ambat', 'ynhaein@gmail.com', '08123135245', '$2y$10$H/X1PQY/O6FeQz52zDBoc.C3jdggS2ymECh8GJmnoqkt/w/iSAlza', 'JL SEJATI  GG KASAH 1');
 
@@ -142,6 +143,13 @@ CREATE TABLE `pesanan` (
   `status` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Dumping data for table `pesanan`
+--
+
+INSERT INTO `pesanan` (`id`, `id_data_user`, `jumlah_orang`, `destinasi`, `tanggal_pemesanan`, `tanggal_keberangkatan`, `tanggal_kepulangan`, `total_bayar`, `status`) VALUES
+('PSN0001', 'USRABBA', 2, 'DST0002', '2025-11-24', '2025-11-25', '2025-11-27', 1999998, 'pending');
+
 -- --------------------------------------------------------
 
 --
@@ -156,6 +164,14 @@ CREATE TABLE `pesanan_peserta` (
   `no_identitas` varchar(255) NOT NULL,
   `tipe_peserta` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pesanan_peserta`
+--
+
+INSERT INTO `pesanan_peserta` (`id`, `id_pesanan`, `nama_lengkap`, `jenis_kelamin`, `no_identitas`, `tipe_peserta`) VALUES
+(1, 'PSN0001', 'Yudhistira Dwi Putra Ambat', 'L', '3176028501750003', 'dewasa'),
+(2, 'PSN0001', 'Kim Yoojung', 'P', '1101055603921234', 'dewasa');
 
 -- --------------------------------------------------------
 
@@ -239,6 +255,16 @@ ALTER TABLE `pesanan_peserta`
 --
 ALTER TABLE `provinsi`
   ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `pesanan_peserta`
+--
+ALTER TABLE `pesanan_peserta`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
