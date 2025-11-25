@@ -173,16 +173,34 @@ if(!$data){
     <?php include '../components/footer.php'; ?>
 
     <script>
-        // Update total price based on jumlah_orang
+        // Update total price based on jumlah hari and jumlah orang
         const hargaPerOrang = <?= $data['harga'] ?>;
         const selectJumlah = document.querySelector('select[name="jumlah_orang"]');
         const totalPrice = document.getElementById('total-price');
+        const inputTglBerangkat = document.querySelector('input[name="tgl_berangkat"]');
+        const inputTglPulang = document.querySelector('input[name="tgl_pulang"]');
 
-        selectJumlah.addEventListener('change', function() {
-            const jumlah = parseInt(this.value) || 1;
-            const total = hargaPerOrang * jumlah;
+        function updateTotalPrice() {
+            const jumlah = parseInt(selectJumlah.value) || 1;
+            const tglBerangkat = inputTglBerangkat.value;
+            const tglPulang = inputTglPulang.value;
+            
+            let jumlahHari = 1;
+            
+            if (tglBerangkat && tglPulang) {
+                const date1 = new Date(tglBerangkat);
+                const date2 = new Date(tglPulang);
+                const diffTime = Math.abs(date2 - date1);
+                jumlahHari = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            }
+            
+            const total = hargaPerOrang * jumlah * jumlahHari;
             totalPrice.textContent = 'Rp ' + total.toLocaleString('id-ID');
-        });
+        }
+
+        selectJumlah.addEventListener('change', updateTotalPrice);
+        inputTglBerangkat.addEventListener('change', updateTotalPrice);
+        inputTglPulang.addEventListener('change', updateTotalPrice);
         
         // Wishlist toggle function
         function toggleWishlistDetail() {

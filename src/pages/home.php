@@ -199,10 +199,10 @@
                                 </header>
                                 <div class="p-4 space-y-3">
                                     <h1 class="text-lg font-medium line-clamp-1"><?= $row['nama_destinasi'] ?></h1>
-                                    <p class="text-sm">
-                                        <span class="font-bold text-orange-600">Rp.<?= number_format($row['harga'], 0, ',', '.') ?></span>
-                                        <span class="text-slate-500"> / Malam</span>
-                                    </p>
+                                    <div class="text-sm">
+                                        <p class="text-slate-500">Start From</p>
+                                        <p class="font-bold text-orange-600">Rp.<?= number_format($row['harga'], 0, ',', '.') ?> <span class="text-slate-500 font-normal">/ Malam</span></p>
+                                    </div>
                                     <div class="flex items-center gap-1.5 text-sm text-slate-600">
                                         <i class="fa-solid fa-location-dot text-red-500"></i>
                                         <p class="line-clamp-1"><?= $row['provinsi'] ?>, <?= $row['kota'] ?></p>
