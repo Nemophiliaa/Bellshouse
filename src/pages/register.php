@@ -143,7 +143,7 @@ if (isset($_POST['register'])) {
                         <input 
                         type="tel" 
                         name="no_tlp"
-                        placeholder="+62 xxx xxx xxx"
+                        placeholder="08 xxx xxx xxx"
                         required
                         class="w-full border border-white/40 rounded-xl p-4 text-black text-lg 
                         focus:border-orange-400 outline-none bg-white/70 hover:bg-white/90 
