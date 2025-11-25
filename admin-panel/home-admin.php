@@ -1,7 +1,7 @@
 <?php
 session_start();
 if(!isset($_SESSION['admin_logged_in'])){
-    header('Location: login-admin.php');
+    header('Location: login.php');
     exit;
 }
 require_once '../backend/connection.php';
